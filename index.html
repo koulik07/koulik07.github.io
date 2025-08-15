@@ -543,17 +543,23 @@
         <section id="contact">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 animate-fade-in-up">Contact <span class="text-primary">Me!</span></h2>
-                <form class="max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
+                <form id="contact-form" action="https://formspree.io/f/xgvzqdbd" method="POST" class="max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s;">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        <input type="text" placeholder="Full Name" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
-                        <input type="email" placeholder="Email Address" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
-                        <input type="tel" placeholder="Mobile Number" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
-                        <input type="text" placeholder="Email Subject" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
+                        <input type="text" name="name" placeholder="Full Name" required class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
+                        <input type="email" name="email" placeholder="Email Address" required class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
+                        <input type="tel" name="phone" placeholder="Mobile Number (Optional)" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
+                        <input type="text" name="subject" placeholder="Email Subject" required class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary">
                     </div>
-                    <textarea placeholder="Your Message" rows="5" class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary mb-6"></textarea>
+                    <textarea name="message" placeholder="Your Message" rows="5" required class="form-input w-full border-2 border-gray-600 rounded-md p-3 text-white focus:outline-none focus:border-primary mb-6"></textarea>
                     <div class="text-center">
-                        <button type="submit" class="btn-primary text-white font-semibold py-3 px-8 rounded-md">Submit</button>
+                        <button type="submit" class="btn-primary text-white font-semibold py-3 px-8 rounded-md hover:scale-105 transition-transform">
+                            <span id="submit-text">Send Message</span>
+                            <span id="submit-spinner" class="hidden">
+                                <i class="fas fa-spinner fa-spin ml-2"></i>
+                            </span>
+                        </button>
                     </div>
+                    <div id="form-status" class="mt-4 text-center"></div>
                 </form>
             </div>
         </section>
@@ -679,6 +685,55 @@
             menuIcon.classList.add('fa-bars');
             document.body.style.overflow = 'auto';
         });
+    });
+
+    // Contact form handling
+    const contactForm = document.getElementById('contact-form');
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const submitText = document.getElementById('submit-text');
+    const submitSpinner = document.getElementById('submit-spinner');
+    const formStatus = document.getElementById('form-status');
+
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitText.textContent = 'Sending...';
+        submitSpinner.classList.remove('hidden');
+        
+        try {
+            const formData = new FormData(contactForm);
+            const response = await fetch(contactForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                formStatus.textContent = 'Message sent successfully! I\'ll get back to you soon.';
+                formStatus.className = 'mt-4 text-center text-green-500';
+                contactForm.reset();
+            } else {
+                throw new Error('Form submission failed');
+            }
+        } catch (error) {
+            formStatus.textContent = 'Oops! Something went wrong. Please try again or email me directly at talktokoulik@gmail.com';
+            formStatus.className = 'mt-4 text-center text-red-500';
+        } finally {
+            // Reset button state
+            submitBtn.disabled = false;
+            submitText.textContent = 'Send Message';
+            submitSpinner.classList.add('hidden');
+            
+            // Hide status message after 5 seconds
+            setTimeout(() => {
+                formStatus.textContent = '';
+                formStatus.className = 'mt-4 text-center';
+            }, 5000);
+        }
     });
 </script>
 <!-- Tawk.to Chat Widget -->

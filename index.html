@@ -297,10 +297,20 @@
                     <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                 </a>
             </div>
-            <button class="md:hidden text-white hover:text-primary transition duration-300">
-                <i class="fa-solid fa-bars text-2xl"></i>
+            <button id="mobile-menu-button" class="md:hidden text-white hover:text-primary transition duration-300">
+                <i class="fa-solid fa-bars text-2xl" id="menu-icon"></i>
             </button>
         </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden absolute top-full left-0 w-full bg-[#0b203a] shadow-lg z-50">
+            <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                <a href="#home" class="block py-2 hover:text-primary transition duration-300">Home</a>
+                <a href="#about" class="block py-2 hover:text-primary transition duration-300">About</a>
+                <a href="#journey" class="block py-2 hover:text-primary transition duration-300">Education</a>
+                <a href="#skills" class="block py-2 hover:text-primary transition duration-300">Skills</a>
+                <a href="#contact" class="block py-2 hover:text-primary transition duration-300">Contact</a>
+            </div>
+        </div>
     </header>
 
     <main class="pt-14">
@@ -644,6 +654,30 @@
                     behavior: 'smooth'
                 });
             }
+        });
+    });
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        menuIcon.classList.toggle('fa-bars');
+        menuIcon.classList.toggle('fa-times');
+        
+        // Toggle body scroll when menu is open
+        document.body.style.overflow = mobileMenu.classList.contains('hidden') ? 'auto' : 'hidden';
+    });
+    
+    // Close menu when clicking on a link
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            menuIcon.classList.remove('fa-times');
+            menuIcon.classList.add('fa-bars');
+            document.body.style.overflow = 'auto';
         });
     });
 </script>
